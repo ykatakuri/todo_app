@@ -1,34 +1,29 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todo_app/todo_model.dart';
+import 'package:todo_app/todos_provider.dart';
 
-class TodosScreen extends StatefulWidget {
+class TodosScreen extends ConsumerStatefulWidget {
   const TodosScreen({super.key});
 
   @override
-  State<TodosScreen> createState() => _TodosScreenState();
+  ConsumerState<TodosScreen> createState() => _TodosScreenState();
 }
 
-class _TodosScreenState extends State<TodosScreen> {
+class _TodosScreenState extends ConsumerState<TodosScreen> {
   final todoController = TextEditingController();
-
-  late Todo todo;
-  List<Todo> todos = [];
 
   @override
   void initState() {
     super.initState();
-
-    todo = Todo(
-      id: 0,
-      title: '',
-      isDone: false,
-    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final todos = ref.watch(todosProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Todos Screen'),
@@ -42,19 +37,22 @@ class _TodosScreenState extends State<TodosScreen> {
           children: [
             TextFormField(
               controller: todoController,
+              decoration: const InputDecoration(
+                labelText: 'What needs to be done?',
+                border: OutlineInputBorder(),
+              ),
               onFieldSubmitted: (value) {
                 if (value.isNotEmpty) {
-                  setState(() {
-                    todo = Todo(
-                      id: Random().nextInt(100),
-                      title: value,
-                      isDone: false,
-                    );
+                  ref.read(todosProvider.notifier).update((state) => [
+                        ...state,
+                        Todo(
+                          id: Random().nextInt(100),
+                          title: value,
+                          isDone: false,
+                        ),
+                      ]);
 
-                    todos.add(todo);
-                    debugPrint('Todo ID: ${todo.id}');
-                    todoController.clear();
-                  });
+                  todoController.clear();
                 }
               },
             ),
@@ -62,10 +60,7 @@ class _TodosScreenState extends State<TodosScreen> {
             if (todos.isNotEmpty) ...[
               Text(
                 'TODOs',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 30,
-                    color: Colors.blue.shade700),
+                style: Theme.of(context).textTheme.displaySmall,
               ),
               ListView.builder(
                 shrinkWrap: true,
@@ -85,11 +80,17 @@ class _TodosScreenState extends State<TodosScreen> {
                       leading: Checkbox(
                         value: todo.isDone,
                         onChanged: (value) {
-                          setState(() {
-                            todo.isDone = value!;
-                            debugPrint(
-                                'Todo ${todo.id} is updated: ${todo.isDone}');
-                          });
+                          ref.read(todosProvider.notifier).state = [
+                            for (final todo in todos)
+                              if (todo.id == todos[index].id)
+                                Todo(
+                                  id: todo.id,
+                                  title: todo.title,
+                                  isDone: value,
+                                )
+                              else
+                                todo
+                          ];
                         },
                         activeColor: Colors.grey,
                       ),
@@ -101,11 +102,17 @@ class _TodosScreenState extends State<TodosScreen> {
                       leading: Checkbox(
                         value: todo.isDone,
                         onChanged: (value) {
-                          setState(() {
-                            todo.isDone = value!;
-                            debugPrint(
-                                'Todo ${todo.id} is updated: ${todo.isDone}');
-                          });
+                          ref.read(todosProvider.notifier).state = [
+                            for (final todo in todos)
+                              if (todo.id == todos[index].id)
+                                Todo(
+                                  id: todo.id,
+                                  title: todo.title,
+                                  isDone: value,
+                                )
+                              else
+                                todo
+                          ];
                         },
                       ),
                     );
