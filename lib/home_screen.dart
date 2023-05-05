@@ -16,7 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final todoController = TextEditingController();
 
   late Todo todo;
-  final List<Todo> todos = [];
+  List<Todo> todos = [];
 
   @override
   void initState() {
@@ -46,16 +46,75 @@ class _HomeScreenState extends State<HomeScreen> {
               controller: todoController,
               onFieldSubmitted: (value) {
                 if (value.isNotEmpty) {
-                  todo.id = Random().nextInt(1000);
-                  todo.title = value;
-                  todo.isDone = false;
+                  setState(() {
+                    todo = Todo(
+                      id: Random().nextInt(100),
+                      title: value,
+                      isDone: false,
+                    );
 
-                  todos.add(todo);
-                  debugPrint('Todo is created: $todo');
-                  todoController.clear();
+                    todos.add(todo);
+                    debugPrint('Todo ID: ${todo.id}');
+                    todoController.clear();
+                  });
                 }
               },
             ),
+            const SizedBox(height: 50),
+            if (todos.isNotEmpty) ...[
+              Text(
+                'TODOs',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 30,
+                    color: Colors.blue.shade700),
+              ),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: todos.length,
+                itemBuilder: (context, index) {
+                  final todo = todos[index];
+
+                  if (todo.isDone!) {
+                    return ListTile(
+                      title: Text(
+                        todo.title,
+                        style: const TextStyle(
+                          decoration: TextDecoration.lineThrough,
+                        ),
+                      ),
+                      leading: Checkbox(
+                        value: todo.isDone,
+                        onChanged: (value) {
+                          setState(() {
+                            todo.isDone = value!;
+                            debugPrint(
+                                'Todo ${todo.id} is updated: ${todo.isDone}');
+                          });
+                        },
+                        activeColor: Colors.grey,
+                      ),
+                      textColor: Colors.grey,
+                    );
+                  } else {
+                    return ListTile(
+                      title: Text(todo.title),
+                      leading: Checkbox(
+                        value: todo.isDone,
+                        onChanged: (value) {
+                          setState(() {
+                            todo.isDone = value!;
+                            debugPrint(
+                                'Todo ${todo.id} is updated: ${todo.isDone}');
+                          });
+                        },
+                      ),
+                    );
+                  }
+                },
+              ),
+            ],
           ],
         ),
       ),
