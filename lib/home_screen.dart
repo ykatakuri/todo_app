@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:todo_app/todo_model.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.title});
@@ -10,6 +13,22 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final todoController = TextEditingController();
+
+  late Todo todo;
+  final List<Todo> todos = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    todo = Todo(
+      id: 0,
+      title: '',
+      isDone: false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,7 +42,20 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         child: ListView(
           children: [
-            TextFormField(),
+            TextFormField(
+              controller: todoController,
+              onFieldSubmitted: (value) {
+                if (value.isNotEmpty) {
+                  todo.id = Random().nextInt(1000);
+                  todo.title = value;
+                  todo.isDone = false;
+
+                  todos.add(todo);
+                  debugPrint('Todo is created: $todo');
+                  todoController.clear();
+                }
+              },
+            ),
           ],
         ),
       ),
