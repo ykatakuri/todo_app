@@ -20,6 +20,13 @@ class MyApp extends StatelessWidget {
       title: 'ToDo App',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        textTheme: TextTheme(
+          displaySmall: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.blue.shade700,
+          ),
+        ),
       ),
     );
   }
