@@ -19,7 +19,7 @@ extension AppRouteX on AppRoute {
 }
 
 final GoRouter router = GoRouter(
-  initialLocation: AppRoute.home.path,
+  initialLocation: '/',
   routes: [
     GoRoute(
       path: '/',
