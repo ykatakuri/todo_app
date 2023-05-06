@@ -54,14 +54,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     : null,
                 onFieldSubmitted: (value) {
                   if (formKey.currentState!.validate()) {
-                    ref.read(todosProvider.notifier).update((state) => [
-                          ...state,
-                          Todo(
-                            id: Random().nextInt(100),
-                            title: value,
-                            isDone: false,
-                          ),
-                        ]);
+                    ref.read(todoServiceProvider).addTodo(Todo(
+                          id: Random().nextInt(100),
+                          title: value,
+                          isDone: false,
+                        ));
 
                     todoController.clear();
                   }

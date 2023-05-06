@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todo_app/todo_model.dart';
+import 'package:todo_app/todo_service.dart';
 
 final todosProvider = StateProvider<List<Todo>>((ref) {
   return [
@@ -19,4 +20,9 @@ final todosProvider = StateProvider<List<Todo>>((ref) {
       isDone: false,
     ),
   ];
+});
+
+// provider to write todo to firestore
+final todoServiceProvider = Provider<TodoService>((ref) {
+  return TodoService();
 });
