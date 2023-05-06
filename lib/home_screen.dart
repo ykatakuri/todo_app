@@ -14,10 +14,11 @@ class HomeScreen extends ConsumerStatefulWidget {
   final String title;
 
   @override
-  ConsumerState<HomeScreen> createState() => _TodosScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _TodosScreenState extends ConsumerState<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  final formKey = GlobalKey<FormState>(debugLabel: '_HomeScreenState');
   final todoController = TextEditingController();
 
   @override
@@ -40,26 +41,32 @@ class _TodosScreenState extends ConsumerState<HomeScreen> {
         ),
         child: ListView(
           children: [
-            TextFormField(
-              controller: todoController,
-              decoration: const InputDecoration(
-                labelText: 'What needs to be done?',
-                border: OutlineInputBorder(),
-              ),
-              onFieldSubmitted: (value) {
-                if (value.isNotEmpty) {
-                  ref.read(todosProvider.notifier).update((state) => [
-                        ...state,
-                        Todo(
-                          id: Random().nextInt(100),
-                          title: value,
-                          isDone: false,
-                        ),
-                      ]);
+            Form(
+              key: formKey,
+              child: TextFormField(
+                controller: todoController,
+                decoration: const InputDecoration(
+                  labelText: 'What needs to be done?',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) => value!.trim().isEmpty
+                    ? 'Please enter some text for the todo'
+                    : null,
+                onFieldSubmitted: (value) {
+                  if (formKey.currentState!.validate()) {
+                    ref.read(todosProvider.notifier).update((state) => [
+                          ...state,
+                          Todo(
+                            id: Random().nextInt(100),
+                            title: value,
+                            isDone: false,
+                          ),
+                        ]);
 
-                  todoController.clear();
-                }
-              },
+                    todoController.clear();
+                  }
+                },
+              ),
             ),
             const SizedBox(height: 50),
             if (todos.isNotEmpty) ...[
