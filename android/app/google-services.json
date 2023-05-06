@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "300613487996",
+    "project_id": "tvskrz",
+    "storage_bucket": "tvskrz.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:300613487996:android:9ec1cf1a1973c164abe8f9",
+        "android_client_info": {
+          "package_name": "com.nara.tvskrz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "300613487996-3hmqpu2k2l8uhsp7gqu2nj5t8hcu96q4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDtIBCquscPsOyEY7ByYPxZursWZwsZn74"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "300613487996-3hmqpu2k2l8uhsp7gqu2nj5t8hcu96q4.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "300613487996-k1p86rpbuvpmcajk8alhb089mbpd90e6.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.todoApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
