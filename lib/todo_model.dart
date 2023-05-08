@@ -1,16 +1,16 @@
 class Todo {
-  int? id;
+  String id;
   String title;
   bool? isDone;
 
   Todo({
-    this.id,
+    required this.id,
     required this.title,
     this.isDone,
   });
 
   factory Todo.fromJson(Map<String, dynamic> json) => Todo(
-        id: json['id'] as int?,
+        id: json['id'] as String,
         title: json['title'] as String,
         isDone: json['isDone'] as bool?,
       );
