@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todo_app/todo_model.dart';
@@ -28,7 +26,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final todos = ref.watch(todosProvider);
+    final AsyncValue<List<Todo>> todos = ref.watch(todosProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -55,7 +53,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 onFieldSubmitted: (value) {
                   if (formKey.currentState!.validate()) {
                     ref.read(todoServiceProvider).addTodo(Todo(
-                          id: Random().nextInt(100),
+                          id: '',
                           title: value,
                           isDone: false,
                         ));
@@ -66,69 +64,42 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             ),
             const SizedBox(height: 50),
-            if (todos.isNotEmpty) ...[
-              Text(
-                'TODOs',
-                style: Theme.of(context).textTheme.displaySmall,
-              ),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: todos.length,
-                itemBuilder: (context, index) {
-                  final todo = todos[index];
+            // display todos from firestore
+            todos.when(
+              data: (todos) {
+                if (todos.isEmpty) {
+                  return const Text('No todos');
+                }
 
-                  if (todo.isDone!) {
-                    return ListTile(
-                      title: Text(
-                        todo.title,
-                        style: const TextStyle(
-                          decoration: TextDecoration.lineThrough,
-                        ),
-                      ),
-                      leading: Checkbox(
-                        value: todo.isDone,
-                        onChanged: (value) {
-                          ref.read(todosProvider.notifier).state = [
-                            for (final todo in todos)
-                              if (todo.id == todos[index].id)
-                                Todo(
-                                  id: todo.id,
-                                  title: todo.title,
-                                  isDone: value,
-                                )
-                              else
-                                todo
-                          ];
-                        },
-                        activeColor: Colors.grey,
-                      ),
-                      textColor: Colors.grey,
-                    );
-                  } else {
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: todos.length,
+                  itemBuilder: (context, index) {
+                    final todo = todos[index];
+
                     return ListTile(
                       title: Text(todo.title),
                       leading: Checkbox(
                         value: todo.isDone,
                         onChanged: (value) {
-                          ref.read(todosProvider.notifier).state = [
-                            for (final todo in todos)
-                              if (todo.id == todos[index].id)
-                                Todo(
-                                  id: todo.id,
-                                  title: todo.title,
-                                  isDone: value,
-                                )
-                              else
-                                todo
-                          ];
+                          ref.read(todoServiceProvider).updateTodo(
+                                id: todo.id,
+                                title: todo.title,
+                                isDone: value!,
+                              );
                         },
                       ),
                     );
-                  }
-                },
+                  },
+                );
+              },
+              loading: () => const CircularProgressIndicator(),
+              error: (error, stackTrace) => const Text(
+                'Oops, something unexpected happened',
+                style: TextStyle(color: Colors.red),
               ),
-            ],
+            ),
           ],
         ),
       ),
